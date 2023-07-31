@@ -1,4 +1,5 @@
-import {BiSearch} from "react-icons/bi"
+'use client'
+import { BiSearch } from "react-icons/bi";
 const Search = () => {
   return (
     <>
@@ -7,10 +8,10 @@ const Search = () => {
           border-[1px]
           w-full
           md:w-auto
-          py-2
+          py-1
           rounded-full 
           shadow-sm
-          hover:shadow-sm
+          hover:shadow-md
           transition
           cursor-pointer
        "
@@ -60,13 +61,15 @@ const Search = () => {
                "
           >
             <div className="hidden sm:block">Add Guests</div>
-            <div className="
+            <div
+              className="
                 p-2
                 bg-rose-500
                 rounded-full
                 text-white
-            ">
-             <BiSearch size={18}/>
+            "
+            >
+              <BiSearch size={18} />
             </div>
           </div>
         </div>
