@@ -4,9 +4,20 @@ import { AiOutlineMenu } from "react-icons/ai";
 import Avatar from "../Avatar";
 import Menuitem from "./Menuitem";
 import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import { signOut } from "next-auth/react";
+import { SafeUser } from "@/app/types";
 
-const Usermenu = () => {
+
+interface UserMenuProps {
+  currentUser?: SafeUser | null 
+}
+
+const Usermenu :React.FC<UserMenuProps> = ({
+   currentUser
+}) => {
   const registerModal =  useRegisterModal()
+  const loginModal =  useLoginModal()
   const [isOpen, setIsOpen] = useState(false);
   
   const toggleOpen = useCallback(() => {
@@ -45,10 +56,22 @@ const Usermenu = () => {
                 top-12
             ">
               <div className="flex flex-col cursor-pointer">
+                  {currentUser ? (
+                      <>
+                       <Menuitem onClick={() => {}} label="My Trips"/>
+                       <Menuitem onClick={() => {}} label="My favorites."/>
+                       <Menuitem onClick={() => {}} label="My reservations."/>
+                       <Menuitem onClick={() => {}} label="My properties."/>
+                       <Menuitem onClick={() => {}} label="Airbnb my home"/>
+                       <hr />
+                       <Menuitem onClick={() => signOut()} label="Logout"/>
+                      </>
+                  ): (
                   <>
-                  <Menuitem onClick={() => {}} label="Login"/>
+                  <Menuitem onClick={loginModal.onOpen} label="Login"/>
                   <Menuitem onClick={registerModal.onOpen} label="Sign up"/>
                   </>
+                  )}
               </div>
             </div>
         )}

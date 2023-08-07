@@ -6,6 +6,8 @@ import Navbar from './components/Navbar/Navbar';
 import ClientOnly from './components/Client_Only';
 import RegisterModal from './components/Modal/RegisterModal';
 import ToasterProvider from './providers/ToasterProvider';
+import LoginModal from './components/Modal/LoginModal';
+import { getCurrentUser } from './actions/getCurrentuser';
 
 
 
@@ -20,18 +22,21 @@ const font = Nunito({
   subsets:['latin']
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const currentUser = await getCurrentUser() ;
+
   return (
     <html lang="en">
       <body className={font.className}>
         <ClientOnly>
            <ToasterProvider/>
+           <LoginModal/>
            <RegisterModal/>
-           <Navbar/>
+           <Navbar currentUser={currentUser}/>
         </ClientOnly>
         {children}
         </body>
