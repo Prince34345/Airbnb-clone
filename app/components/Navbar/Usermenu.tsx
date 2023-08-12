@@ -1,95 +1,151 @@
-"use client";
+'use client';
+
 import { useCallback, useState } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+import useLoginModal from "@/app/hooks/useLoginModal";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useRentModal from "@/app/hooks/useRentModal";
+import { SafeUser } from "@/app/types";
+
+
 import Avatar from "../Avatar";
 import Menuitem from "./Menuitem";
-import useRegisterModal from "@/app/hooks/useRegisterModal";
-import useLoginModal from "@/app/hooks/useLoginModal";
-import { signOut } from "next-auth/react";
-import { SafeUser } from "@/app/types";
-import useRentModal from "@/app/hooks/useRentModal";
-
 
 interface UserMenuProps {
-  currentUser?: SafeUser | null 
+  currentUser?: SafeUser | null
 }
 
-const Usermenu :React.FC<UserMenuProps> = ({
-   currentUser
+const UserMenu: React.FC<UserMenuProps> = ({
+  currentUser
 }) => {
-  
-  const registerModal =  useRegisterModal()
-  const loginModal =  useLoginModal()
+  const router = useRouter();
+
+  const loginModal = useLoginModal();
+  const registerModal = useRegisterModal();
   const rentModal = useRentModal();
 
   const [isOpen, setIsOpen] = useState(false);
-  
-  const toggleOpen = useCallback(() => {
-       setIsOpen((val) => !val)
-  }, [])
-  const onRent = useCallback(() => {
-     if (!currentUser) {
-        return loginModal.onOpen()
-     } 
 
-     // Open Rent modal
-     rentModal.onOpen()
-  },[currentUser, loginModal])
-  return (
-    <>
-      <div className="relative">
-        <div className=" flex flex-row items-center gap-3 ">
-          <div
-            onClick={onRent}
-            className="hidden md:block text-sm  text-center  font-smeibold py-3 px-4 rounded-full hover:bg-neutral-100 trnasition cursor-pointer"
-          >
-            Airbnb Your Home
-          </div>
-          <div
-            onClick={toggleOpen}
-            className="p-4 md:py-1 md:px-2 border-[1px] border-neutral-200 flex flex-row items-center gap-3 rounded-full cursor-pointer hover:shadow-md transition"
-          >
-            <AiOutlineMenu />
-            <div className="hidden md:block">
-              <Avatar src={currentUser?.image} />
-            </div>
+  const toggleOpen = useCallback(() => {
+    setIsOpen((value) => !value);
+  }, []);
+
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    rentModal.onOpen();
+  }, [loginModal, rentModal, currentUser]);
+
+  return ( 
+    <div className="relative">
+      <div className="flex flex-row items-center gap-3">
+        <div 
+          onClick={onRent}
+          className="
+            hidden
+            md:block
+            text-sm 
+            font-semibold 
+            py-3 
+            px-4 
+            rounded-full 
+            hover:bg-neutral-100 
+            transition 
+            cursor-pointer
+          "
+        >
+          Airbnb your home
+        </div>
+        <div 
+        onClick={toggleOpen}
+        className="
+          p-4
+          md:py-1
+          md:px-2
+          border-[1px] 
+          border-neutral-200 
+          flex 
+          flex-row 
+          items-center 
+          gap-3 
+          rounded-full 
+          cursor-pointer 
+          hover:shadow-md 
+          transition
+          "
+        >
+          <AiOutlineMenu />
+          <div className="hidden md:block">
+            <Avatar src={currentUser?.image} />
           </div>
         </div>
-        {isOpen && (
-            <div className="
-                absolute
-                rounded-xl
-                shadow-md
-                w-[40vw]
-                md:w-3/4
-                bg-white
-                oveflow-hidden
-                right-0
-                top-12
-            ">
-              <div className="flex flex-col cursor-pointer">
-                  {currentUser ? (
-                      <>
-                       <Menuitem onClick={() => {}} label="My Trips"/>
-                       <Menuitem onClick={() => {}} label="My favorites."/>
-                       <Menuitem onClick={() => {}} label="My reservations."/>
-                       <Menuitem onClick={() => {}} label="My properties."/>
-                       <Menuitem onClick={rentModal.onOpen} label="Airbnb my home"/>
-                       <hr />
-                       <Menuitem onClick={() => signOut()} label="Logout"/>
-                      </>
-                  ): (
-                  <>
-                  <Menuitem onClick={loginModal.onOpen} label="Login"/>
-                  <Menuitem onClick={registerModal.onOpen} label="Sign up"/>
-                  </>
-                  )}
-              </div>
-            </div>
-        )}
       </div>
-    </>
-  );
-};
-
-export default Usermenu;
+      {isOpen && (
+        <div 
+          className="
+            absolute 
+            rounded-xl 
+            shadow-md
+            w-[40vw]
+            md:w-3/4 
+            bg-white 
+            overflow-hidden 
+            right-0 
+            top-12 
+            text-sm
+          "
+        >
+          <div className="flex flex-col cursor-pointer">
+            {currentUser ? (
+              <>
+                <Menuitem 
+                  label="My trips" 
+                  onClick={() => router.push('/trips')}
+                />
+                <Menuitem 
+                  label="My favorites" 
+                  onClick={() => router.push('/favorites')}
+                />
+                <Menuitem 
+                  label="My reservations" 
+                  onClick={() => router.push('/reservations')}
+                />
+                <Menuitem 
+                  label="My properties" 
+                  onClick={() => router.push('/properties')}
+                />
+                <Menuitem 
+                  label="Airbnb your home" 
+                  onClick={rentModal.onOpen}
+                />
+                <hr />
+                <Menuitem 
+                  label="Logout" 
+                  onClick={() => signOut()}
+                />
+              </>
+            ) : (
+              <>
+                <Menuitem 
+                  label="Login" 
+                  onClick={loginModal.onOpen}
+                />
+                <Menuitem 
+                  label="Sign up" 
+                  onClick={registerModal.onOpen}
+                />
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+   );
+}
+ 
+export default UserMenu;
